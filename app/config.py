@@ -3,9 +3,8 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    # API 설정
     API_V1_STR: str = "/api/v1"
-    PROJECT_NAME: str = "FastAPI Backend"
+    PROJECT_NAME: str = "AI Backend"
     HOST: str = "0.0.0.0"
     PORT: int = 8000
     DEBUG: bool = True
@@ -22,6 +21,18 @@ class Settings(BaseSettings):
         "http://127.0.0.1:3000",
         "http://127.0.0.1:8080"
     ]
+
+    OPENAI_API_KEY: str = ""
+    OPENAI_MODEL_NAME: str = ""
+    OPENAI_TEMPERATURE: float = 0.7
+    OPENAI_MAX_TOKENS: int = 1000
+
+    LANGSMITH_API_KEY: str = ""
+    LANGSMITH_ENDPOINT: str = ""
+    LANGSMITH_PROJECT: str = "trader-cho"
+    LANGSMITH_TRACING: bool = True
+
+    LANGGRAPH_DEBUG: bool = True
 
     class Config:
         env_file = ".env"

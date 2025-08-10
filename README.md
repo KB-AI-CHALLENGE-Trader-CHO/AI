@@ -9,6 +9,9 @@ FastAPI를 사용한 백엔드 API 서버 프로젝트입니다.
 - Pydantic을 사용한 데이터 검증
 - JWT 인증
 - 자동 API 문서 생성
+- **LangChain을 통한 LLM 통합**
+- **LangSmith를 통한 AI 모델 추적 및 모니터링**
+- **LangGraph를 통한 워크플로우 및 도구 실행**
 
 ## 설치 방법
 
@@ -49,6 +52,25 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000
 - Swagger UI: http://localhost:8000/docs
 - ReDoc: http://localhost:8000/redoc
 
+## AI 서비스 API
+
+### 채팅 API
+- `POST /api/v1/ai/chat` - AI와의 대화
+- `GET /api/v1/ai/models/info` - 사용 가능한 모델 정보
+
+### 워크플로우 API
+- `POST /api/v1/ai/workflow/create` - 새 워크플로우 생성
+- `POST /api/v1/ai/workflow/{name}/execute` - 워크플로우 실행
+- `GET /api/v1/ai/workflows` - 워크플로우 목록
+- `GET /api/v1/ai/workflow/{name}` - 워크플로우 정보
+
+### 도구 API
+- `POST /api/v1/ai/tools/execute` - 도구 실행
+
+### 모니터링 API
+- `GET /api/v1/ai/langsmith/status` - LangSmith 상태
+- `GET /api/v1/ai/health/ai` - AI 서비스 헬스 체크
+
 ## 프로젝트 구조
 
 ```
@@ -72,4 +94,34 @@ SQLite 데이터베이스를 사용하는 경우, 애플리케이션을 처음 �
 
 ```bash
 pytest
+```
+
+## CLI 도구
+
+AI 서비스를 위한 명령행 도구가 포함되어 있습니다:
+
+```bash
+# AI와 채팅
+python -m app.cli chat "안녕하세요"
+
+# 시스템 프롬프트와 함께 채팅
+python -m app.cli chat "파이썬 코드 작성해줘" --system "당신은 유능한 프로그래머입니다"
+
+# 워크플로우 목록 조회
+python -m app.cli workflow list
+
+# 워크플로우 정보 조회
+python -m app.cli workflow info --name workflow_name
+
+# 도구 실행
+python -m app.cli tool duckduckgo_search "파이썬 프로그래밍"
+
+# AI 서비스 예제 실행
+python -m app.cli examples
+
+# AI 서비스 상태 확인
+python -m app.cli status
+
+# 모델 정보 조회
+python -m app.cli models
 ```
