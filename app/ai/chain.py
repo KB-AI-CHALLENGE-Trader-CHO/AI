@@ -1,21 +1,21 @@
+from langchain.output_parsers import PydanticOutputParser
 from langchain_core.language_models import LLM
-from langchain_core.output_parsers import BaseOutputParser
 from langchain_core.prompts import PromptTemplate
 
 import logging
 
 from app.ai.llm_model import llm_model
-from app.ai.output_parser import DailyReport
-from app.ai.prompt_template import daily_template
+from app.ai.OutputObject import TestModel
+from app.ai.prompt_template import test_template
 
 logger = logging.getLogger(__name__)
 
 
 class LlmChain:
 
-    def __init__(self, prompt: PromptTemplate, model: LLM, parser: BaseOutputParser):
-        self.prompt = prompt
-        self.model = model
+    def __init__(self, prompt: PromptTemplate, model: LLM, parser: PydanticOutputParser):
+        self.prompt = prompt.partial(format=parser.get_format_instructions())
+        self.model = model.get_model()
         self.output_parser = parser
 
     async def ainvoke(self):
@@ -32,4 +32,6 @@ class LlmChain:
         except Exception as e:
             logging.error(f"비동기 배치 프롬프트 실행 실패: {e}")
 
-daily_report_chain = LlmChain(daily_template, llm_model, DailyReport().get_output_parser())
+
+test_chain = LlmChain(prompt=test_template, model=llm_model,
+                      parser=PydanticOutputParser(pydantic_object=TestModel))

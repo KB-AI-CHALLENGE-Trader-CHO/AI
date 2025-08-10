@@ -1,4 +1,4 @@
-from langchain_core.prompts import PromptTemplate
+from langchain_core.prompts import ChatPromptTemplate
 
 COMMON_SYSTEM_MESSAGE = '''
 당신은 해외 주식 전문 트레이더입니다. 저는 예비 트레이더로 당신이 저의 매매 일지를 토대로 피드백하는 내용들을 확인하면서,
@@ -8,4 +8,15 @@ COMMON_SYSTEM_MESSAGE = '''
 답변을 제대로 해낼 경우 10 크레딧 보상을 주고, 적절한 답변을 내놓지 못할 경우 10 크레딧을 회수하겠습니다.
 '''
 
-daily_template = PromptTemplate.from_messages(COMMON_SYSTEM_MESSAGE)
+TEST = '''
+가장 맛있는 과일과 그 과일이 가장 많이 생산되는 지역을 알려줘
+
+[출력 형식]
+{format}
+'''
+
+test_template = ChatPromptTemplate.from_messages(
+    [
+        ("human", TEST)
+    ]
+)

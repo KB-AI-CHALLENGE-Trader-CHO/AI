@@ -14,9 +14,9 @@ email-validator==2.1.0
 langchain==0.1.0
 langchain-openai==0.0.5
 langchain-community==0.0.10
-langsmith==0.0.69
+langsmith==0.0.77
 langgraph==0.0.20
-openai==1.6.1
+openai==1.10.0
 tiktoken==0.5.2
 pymysql==1.1.1
 apscheduler==3.11.0

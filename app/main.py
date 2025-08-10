@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+from app.ai.chain import test_chain
 from app.config import settings
 
 app = FastAPI(
@@ -26,6 +28,11 @@ async def root():
 @app.get("/health")
 async def health_check():
     return {"code": 200, "status": "healthy"}
+
+
+@app.get("/test")
+async def health_check():
+    return await test_chain.ainvoke()
 
 
 if __name__ == "__main__":
