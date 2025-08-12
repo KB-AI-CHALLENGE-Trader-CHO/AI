@@ -19,7 +19,7 @@ class LLMChain:
             model: LLM,
             parser: PydanticOutputParser
     ) -> None:
-        self.prompt = prompt.partial(format_instructions=parser.get_format_instructions())
+        self.prompt = prompt
         self.model = model
         self.output_parser = parser
 
@@ -37,24 +37,25 @@ class LLMChain:
             logger.error(f"비동기 프롬프트 실행 실패: {e}")
             return None
 
-    async def abatch(self, prompt_parameter: dict) -> Optional[str]:
+    async def abatch(self, prompt_parameter: list[dict], batch_size: int = 5) -> Optional[str]:
         try:
             if not self.model:
                 logger.error("LLM 모델이 초기화되지 않았습니다.")
                 return None
 
             chain = self.prompt | self.model | self.output_parser
-            result = await chain.abatch(prompt_parameter)
+            result = await chain.abatch(prompt_parameter, config={"max_concurrency": batch_size})
             logger.info("비동기 배치 체인 실행 성공")
             return result
         except Exception as e:
-            logger.error(f"비동기 배치 프롬프트 실행 실패: {e}")
+            logger.info(f"비동기 배치 프롬프트 실행 실패: {e}")
             return None
 
 
 test_chain = LLMChain(
-    prompt=test_template,
-    model=llm_model,
+    prompt=test_template.partial(
+        format_instructions=PydanticOutputParser(pydantic_object=TestModel).get_format_instructions()),
+    model=llm_model.get_model(),
     parser=PydanticOutputParser(pydantic_object=TestModel)
 )
 
@@ -62,7 +63,7 @@ test_chain = LLMChain(
 trade_report_parser = PydanticOutputParser(pydantic_object=TradeReport)
 fixing_parser = OutputFixingParser.from_llm(parser=trade_report_parser, llm=llm_model.get_model())
 trade_report_chain = LLMChain(
-    prompt=trade_report_template,
+    prompt=trade_report_template.partial(format_instructions=fixing_parser.get_format_instructions()),
     model=llm_model.get_model(),
     parser=fixing_parser,
 )

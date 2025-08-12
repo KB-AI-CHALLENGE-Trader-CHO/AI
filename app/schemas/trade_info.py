@@ -28,15 +28,3 @@ class TradeInfo(BaseModel):
         except Exception:
             pass
         return v
-
-
-test_trade_info = TradeInfo(
-    id=1,
-    stock_item_id=2,
-    trade_type="BUY",
-    trade_datetime=datetime.fromisoformat("2025-07-01 23:47:00"),
-    price=211.1,
-    quantity=3.0,
-    avg_buy_price="nan",
-    memo="애플 가격 오른다고 해서 일단 샀다."
-)

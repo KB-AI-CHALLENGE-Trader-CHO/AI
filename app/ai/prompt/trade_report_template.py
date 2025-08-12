@@ -7,14 +7,8 @@ trade_prompt = '''
 제 거래 정보와 제가 생각해서 적은 메모는 다음과 같습니다.
 {trade_info}
 
-이를 토대로 판단한 일봉 평가 지표는 다음과 같습니다.
-{daily_context}
-
-분봉 평가 지표는 다음과 같습니다.
-{intraday_timing}
-
-출력은 반드시 다음 형식을 따르고, 다른 텍스트는 절대 출력하지 마세요.
-{format_instructions}
+이를 토대로 판단한 분봉 및 일봉 평가 지표는 다음과 같습니다. 분봉은 infra, 일봉은 daily로 접두사로 시작합니다.
+{trade_evaluation}
 '''
 
 mission = '''
@@ -29,6 +23,9 @@ mission = '''
 내용 응답
 
 위와 같이 응답해주세요. 매수일 경우 avg_buy_price의 값을 신경쓰지 말고 답변해주세요.
+
+출력은 반드시 다음 형식을 따르고, 다른 텍스트는 절대 출력하지 마세요.
+{format_instructions}
 '''
 
 # 매매별 프롬프트 템플릿

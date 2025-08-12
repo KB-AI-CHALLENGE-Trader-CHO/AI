@@ -32,7 +32,6 @@ class LLMModel:
                 max_tokens=self.max_tokens,
                 max_retries=self.max_retries,
                 openai_api_key=self.openai_api_key,
-                model_kwargs={"response_format": {"type": "json_object"}}
             )
             logger.info(f"LLM 모델 '{self.model}' 초기화 성공")
         except Exception as e:

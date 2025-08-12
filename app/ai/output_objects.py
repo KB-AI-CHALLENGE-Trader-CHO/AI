@@ -15,6 +15,9 @@ class TradeReport(BaseModel):
     bad: str = Field(description="[못한점]에 이어서 나오는 내용")
     suggestions: str = Field(description="[향후 개선 방향]에 이어서 나오는 내용")
 
+    def get_suggestions_string(self):
+        return f"[잘한 점]\n{self.good}\n\n[못한 점]\n{self.bad}\n\n[향후 개선 방향]\n{self.suggestions}"
+
 
 class WeeklyReport(BaseModel):
     """주간 매매 일지 종합 분석 리포트"""

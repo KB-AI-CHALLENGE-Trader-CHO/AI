@@ -1,22 +1,21 @@
+import logging
 from contextlib import asynccontextmanager
 
+from apscheduler.triggers.cron import CronTrigger
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import logging
 
-from app.ai.chain import test_chain, trade_report_chain
+from app.ai.chain import test_chain
 from app.config import settings
 from app.job.job_manager import JobManager
-from app.schemas.daily_context import test_daily_context
-from app.schemas.intraday_timing import test_intraday_timing
-from app.schemas.trade_info import test_trade_info
+from app.job.trade_report_job import trade_report_job
 
 logging.basicConfig(level=logging.INFO)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # job_manager.register_jobs(test_job, IntervalTrigger(seconds=5), "test_job")
+    job_manager.register_jobs(trade_report_job, CronTrigger(hour=0, minute=0), "test_job")
     job_manager.start_scheduler()
     yield
     job_manager.shutdown_scheduler()
@@ -49,12 +48,3 @@ async def health_check():
 @app.get("/test")
 async def run_test_chain():
     return await test_chain.ainvoke({})
-
-
-@app.get("/trade-report")
-async def trade_report():
-    return await trade_report_chain.ainvoke({
-        "trade_info": test_trade_info,
-        "daily_context": test_daily_context,
-        "intraday_timing": test_intraday_timing
-    })
