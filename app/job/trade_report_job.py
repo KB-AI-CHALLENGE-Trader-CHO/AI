@@ -16,7 +16,7 @@ TRADE_REPORT_BATCH_JOB_SIZE = 5
 
 # 매일 매일 진행
 @traceable(name="매매별 분석 cron job")
-async def trade_report_job(app: FastAPI, trade_reports=None) -> None:
+async def trade_report_job(app: FastAPI) -> None:
     db = SessionLocal()
     evaluated_trades = db.query(TradeEvaluation).filter(func.date(TradeEvaluation.evaluated_at) == date.today()).all()
     trade_evaluations = [
@@ -24,8 +24,9 @@ async def trade_report_job(app: FastAPI, trade_reports=None) -> None:
          "trade_info": evaluated_trade.trade_history.to_dict()} for evaluated_trade in evaluated_trades
     ]
 
+    trade_reports = []
     trade_evaluations_len = len(trade_evaluations)
-    for i in range(0, len(trade_evaluations), TRADE_REPORT_BATCH_JOB_SIZE):
+    for i in range(0, trade_evaluations_len, TRADE_REPORT_BATCH_JOB_SIZE):
         trade_reports.extend(await trade_report_chain.abatch(
             prompt_parameter=trade_evaluations[
                              i:i + TRADE_REPORT_BATCH_JOB_SIZE if trade_evaluations_len > i + TRADE_REPORT_BATCH_JOB_SIZE
@@ -33,9 +34,9 @@ async def trade_report_job(app: FastAPI, trade_reports=None) -> None:
             batch_size=TRADE_REPORT_BATCH_JOB_SIZE))
 
     for i in range(5):
-        if evaluated_trades[i].trade_history.weekly_analyses is None:
+        if evaluated_trades[i].trade_history.weekly_analysis is None:
             logging.info(f"매매 분석 데이터 미존재")
             raise Exception()
-        evaluated_trades[i].trade_history.weekly_analyses.suggestion = trade_reports[i].get_suggestions_string()
+        evaluated_trades[i].trade_history.weekly_analysis.suggestion = trade_reports[i].get_suggestions_string()
     logging.info(f"매매별 분석 cron job 실행 완료: {date.today()}")
     db.commit()

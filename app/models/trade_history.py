@@ -23,10 +23,10 @@ class TradeHistory(Base):
     memo = Column(String(255), nullable=True)
     trade_type = Column(SAEnum(TradeType, name="trade_type", native_enum=False), nullable=False)
 
-    # 의존 관계 설정
+    # 관계 설정
     stock_item = relationship("StockItem", back_populates="trade_histories")
-    weekly_analyses = relationship("WeeklyAnalysis", back_populates="trade_history", uselist=False)
-    trade_evaluations = relationship("TradeEvaluation", back_populates="trade_history", cascade="all, delete-orphan",
+    weekly_analysis = relationship("WeeklyAnalysis", back_populates="trade_history", uselist=False)
+    trade_evaluation = relationship("TradeEvaluation", back_populates="trade_history", cascade="all, delete-orphan",
                                      lazy="selectin")
 
     def to_dict(self) -> dict:

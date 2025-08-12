@@ -5,7 +5,7 @@ from typing import Optional
 import logging
 
 from app.ai.llm_model import llm_model
-from app.ai.output_objects import TestModel, TradeReport
+from app.schemas.report_schema import TestModel, TradeReport
 from app.ai.prompt.test_template import test_template
 from app.ai.prompt.trade_report_template import trade_report_template
 

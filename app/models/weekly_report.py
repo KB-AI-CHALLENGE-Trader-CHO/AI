@@ -12,5 +12,5 @@ class WeeklyReport(Base):
     period = Column(DATE, nullable=False)
     summary = Column(String(500), nullable=True)
 
-    # 의존 관계 설정
+    # 관계 설정
     weekly_analyses = relationship("WeeklyAnalysis", back_populates="weekly_report")

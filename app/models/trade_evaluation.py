@@ -41,7 +41,7 @@ class TradeEvaluation(Base):
     trade_history_id = Column(BigInteger, ForeignKey("trade_history.id"), nullable=False)
 
     # 관계 설정
-    trade_history = relationship("TradeHistory", back_populates="trade_evaluations", lazy="joined")
+    trade_history = relationship("TradeHistory", back_populates="trade_evaluation", lazy="joined")
 
     def to_dict(self) -> dict:
         return {column.name: getattr(self, column.name) for column in self.__table__.columns}
