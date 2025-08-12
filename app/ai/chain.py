@@ -5,7 +5,8 @@ from typing import Optional
 import logging
 
 from app.ai.llm_model import llm_model
-from app.schemas.report_schema import TestModel, TradeReport
+from app.ai.prompt.weekly_report_template import weekly_report_template
+from app.schemas.report_schema import TestModel, TradeReport, WeeklyReport
 from app.ai.prompt.test_template import test_template
 from app.ai.prompt.trade_report_template import trade_report_template
 
@@ -37,7 +38,7 @@ class LLMChain:
             logger.error(f"비동기 프롬프트 실행 실패: {e}")
             return None
 
-    async def abatch(self, prompt_parameter: list[dict], batch_size: int = 5) -> Optional[str]:
+    async def abatch(self, prompt_parameter: list[dict], batch_size: int = 5) -> Optional[list[str]]:
         try:
             if not self.model:
                 logger.error("LLM 모델이 초기화되지 않았습니다.")
@@ -66,4 +67,13 @@ trade_report_chain = LLMChain(
     prompt=trade_report_template.partial(format_instructions=fixing_parser.get_format_instructions()),
     model=llm_model.get_model(),
     parser=fixing_parser,
+)
+
+# 주간 종합 분석 체인
+weekly_report_parser = PydanticOutputParser(pydantic_object=WeeklyReport)
+weekly_fixing_parser = OutputFixingParser.from_llm(parser=weekly_report_parser, llm=llm_model.get_model())
+weekly_report_chain = LLMChain(
+    prompt=weekly_report_template.partial(format_instructions=weekly_fixing_parser.get_format_instructions()),
+    model=llm_model.get_model(),
+    parser=weekly_fixing_parser,
 )
