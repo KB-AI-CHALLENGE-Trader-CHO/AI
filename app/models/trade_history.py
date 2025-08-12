@@ -25,4 +25,9 @@ class TradeHistory(Base):
 
     # 의존 관계 설정
     stock_item = relationship("StockItem", back_populates="trade_histories")
-    weekly_analyses = relationship("WeeklyAnalysis", back_populates="trade_history")
+    weekly_analyses = relationship("WeeklyAnalysis", back_populates="trade_history", uselist=False)
+    trade_evaluations = relationship("TradeEvaluation", back_populates="trade_history", cascade="all, delete-orphan",
+                                     lazy="selectin")
+
+    def to_dict(self) -> dict:
+        return {column.name: getattr(self, column.name) for column in self.__table__.columns}
