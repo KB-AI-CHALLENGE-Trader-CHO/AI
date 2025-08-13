@@ -12,11 +12,11 @@ from app.job.job_manager import JobManager
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    job_manager.register_jobs(trade_report_job, CronTrigger(hour=0, minute=0), "trade_report_job")
-    job_manager.register_jobs(weekly_report_job, CronTrigger(day_of_week="sun", hour=0, minute=0), "weekly_report_job")
-    job_manager.register_jobs(monthly_report_job, CronTrigger(day="1", hour=0, minute=0), "monthly_report_job")
-    job_manager.register_jobs(monthly_stock_report_job, CronTrigger(day="1", hour=0, minute=5),
-                              "monthly_stock_report_job")
+    # job_manager.register_jobs(trade_report_job, CronTrigger(hour=0, minute=0), "trade_report_job")
+    # job_manager.register_jobs(weekly_report_job, CronTrigger(day_of_week="sun", hour=0, minute=0), "weekly_report_job")
+    # job_manager.register_jobs(monthly_report_job, CronTrigger(day="1", hour=0, minute=0), "monthly_report_job")
+    # job_manager.register_jobs(monthly_stock_report_job, CronTrigger(day="1", hour=0, minute=5),
+    #                           "monthly_stock_report_job")
     job_manager.start_scheduler()
     yield
     job_manager.shutdown_scheduler()
@@ -43,6 +43,7 @@ job_manager = JobManager(app)
 
 @app.get("/health")
 async def health_check():
+    await weekly_report_job(app)
     return {"code": 200, "status": "healthy"}
 
 
