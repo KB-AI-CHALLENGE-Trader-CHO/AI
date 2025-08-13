@@ -5,7 +5,7 @@ from app.ai.prompt.common_template import COMMON_SYSTEM_MESSAGE
 # 매매별 평가 프롬프트
 trade_prompt = '''
 제 거래 정보와 제가 생각해서 적은 메모는 다음과 같습니다.
-{trade_info}
+{trade_history}
 
 이를 토대로 판단한 분봉 및 일봉 평가 지표는 다음과 같습니다. 분봉은 infra, 일봉은 daily로 접두사로 시작합니다.
 {trade_evaluation}

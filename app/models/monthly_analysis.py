@@ -11,8 +11,8 @@ class MonthlyAnalysis(Base):
     analysis_details = Column(LONGTEXT)
     date_time = Column(DATETIME(fsp=6), nullable=False)
     suggestion = Column(LONGTEXT)
-    monthly_report_id = Column(BIGINT, ForeignKey("monthly_report.id"))
-    stock_item_id = Column(BIGINT, ForeignKey("stock_item.id"))
+    monthly_report_id = Column(BIGINT, ForeignKey("monthly_report.id"), nullable=False)
+    stock_item_id = Column(BIGINT, ForeignKey("stock_item.id"), nullable=False)
 
     # 관계 설정
     monthly_report = relationship("MonthlyReport", back_populates="monthly_analyses", uselist=False)

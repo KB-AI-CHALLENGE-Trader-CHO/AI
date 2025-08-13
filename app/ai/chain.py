@@ -84,8 +84,7 @@ class LLMChain:
 
 
 test_chain = LLMChain(
-    prompt=test_template.partial(
-        format_instructions=PydanticOutputParser(pydantic_object=TestModel).get_format_instructions()),
+    prompt=test_template.partial(format_instructions=PydanticOutputParser(pydantic_object=TestModel).get_format_instructions()),
     model=llm_model.get_model(),
     parser=PydanticOutputParser(pydantic_object=TestModel)
 )
@@ -112,8 +111,7 @@ weekly_report_chain = LLMChain(
 monthly_stock_report_parser = PydanticOutputParser(pydantic_object=MonthlyStockReport)
 monthly_stock_fixing_parser = OutputFixingParser.from_llm(parser=monthly_stock_report_parser, llm=llm_model.get_model())
 monthly_stock_report_chain = LLMChain(
-    prompt=monthly_stock_report_template.partial(
-        format_instructions=monthly_stock_fixing_parser.get_format_instructions()),
+    prompt=monthly_stock_report_template.partial(format_instructions=monthly_stock_fixing_parser.get_format_instructions()),
     model=llm_model.get_model(),
     parser=monthly_stock_fixing_parser,
 )

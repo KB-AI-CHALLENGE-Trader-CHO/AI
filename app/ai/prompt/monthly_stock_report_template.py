@@ -5,7 +5,7 @@ from app.ai.prompt.common_template import COMMON_SYSTEM_MESSAGE
 # 월간 종목 평가 프롬프트
 monthly_stock_reports_prompt = '''
 제가 이번 달에 진행한 종목 중 하나의 매매들의 평가는 다음과 같습니다.
-{stock_reports}
+{stock_suggestions}
 '''
 
 mission = '''

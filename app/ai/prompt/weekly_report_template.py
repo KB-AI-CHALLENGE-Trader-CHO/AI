@@ -5,7 +5,7 @@ from app.ai.prompt.common_template import COMMON_SYSTEM_MESSAGE
 # 주간 평가 프롬프트
 weekly_reports_prompt = '''
 제가 이번주에 한 매매들의 평가는 다음과 같습니다.
-{weekly_reports}
+{suggestions}
 '''
 
 mission = '''
