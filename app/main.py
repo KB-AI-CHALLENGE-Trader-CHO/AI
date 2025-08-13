@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 
 from apscheduler.triggers.cron import CronTrigger
+from apscheduler.triggers.interval import IntervalTrigger
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -16,7 +17,7 @@ from app.job.weekly_report_job import weekly_report_job
 async def lifespan(app: FastAPI):
     job_manager.register_jobs(trade_report_job, CronTrigger(hour=0, minute=0), "trade_report_job")
     job_manager.register_jobs(weekly_report_job, CronTrigger(day_of_week="sun", hour=0, minute=0), "weekly_report_job")
-    job_manager.register_jobs(monthly_stock_report_job, CronTrigger(day="1", hour=0, minute=0),
+    job_manager.register_jobs(monthly_stock_report_job, IntervalTrigger(seconds=10),
                               "monthly_stock_report_job")
     job_manager.register_jobs(monthly_report_job, CronTrigger(day="1", hour=0, minute=0), "monthly_report_job")
     job_manager.start_scheduler()

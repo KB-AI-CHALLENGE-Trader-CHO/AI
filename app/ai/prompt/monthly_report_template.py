@@ -4,7 +4,7 @@ from app.ai.prompt.common_template import COMMON_SYSTEM_MESSAGE
 
 # 월간 종합 평가 프롬프트
 monthly_reports_prompt = '''
-제가 이번달에 진행한 매매들의 평가는 다음과 같습니다.
+제가 이번 달에 진행한 매매들의 평가는 다음과 같습니다.
 {trade_reports}
 '''
 

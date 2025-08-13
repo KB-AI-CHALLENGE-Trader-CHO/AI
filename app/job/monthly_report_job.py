@@ -3,7 +3,7 @@ from datetime import date, datetime
 
 from fastapi import FastAPI
 from langsmith import traceable
-from sqlalchemy import func
+from sqlalchemy import func, text
 
 from app.ai.chain import monthly_stock_report_chain, monthly_report_chain
 from app.database import SessionLocal
@@ -21,9 +21,10 @@ async def monthly_stock_report_job(app: FastAPI) -> None:
     rows = (
         db.query(TradeHistory.stock_item_id, WeeklyAnalysis.suggestion)
         .join(TradeHistory, WeeklyAnalysis.history_id == TradeHistory.id)
-        .filter(func.date_format(WeeklyAnalysis.date_time, "%Y-%m") == func.date_format(
-            func.date_sub(func.curdate(), func.interval(1, "month")), "%Y-%m"))
-        .all()
+        .filter(
+            func.date_format(WeeklyAnalysis.date_time, "%Y-%m")
+            == func.date_format(func.date_sub(func.curdate(), text("INTERVAL 1 MONTH")), "%Y-%m")
+        ).all()
     )
     stock_dict = dict()
     for stock_item_id, suggestion in rows:
@@ -31,7 +32,6 @@ async def monthly_stock_report_job(app: FastAPI) -> None:
             stock_dict[stock_item_id] = [suggestion]
         else:
             stock_dict[stock_item_id].append(suggestion)
-
     stock_item_ids, stock_item_reports = zip(*stock_dict.items())
     stock_item_len = len(stock_item_ids)
     stock_item_reports = [{"stock_reports": stock_item_report} for stock_item_report in stock_item_reports]
@@ -43,12 +43,11 @@ async def monthly_stock_report_job(app: FastAPI) -> None:
             if stock_item_len >= i + MONTHLY_STOCK_REPORT_BATCH_JOB_SIZE else stock_item_len],
             batch_size=MONTHLY_STOCK_REPORT_BATCH_JOB_SIZE))
 
-    for i in range(stock_item_len):
         db.add(MonthlyAnalysis(
             stock_item_id=stock_item_ids[i],
             date_time=datetime.now(),
-            analysis_details="무슨 값을 넣어야 하나",
-            suggestion=stock_item_reports[i].analysis_detail
+            analysis_details=monthly_stock_reports[i].analysis_details,
+            suggestion=monthly_stock_reports[i].suggestion
         ))
     logging.info(f"월간 종목 분석 cron job 실행 완료: {date.today()}")
     db.commit()
@@ -58,11 +57,11 @@ async def monthly_stock_report_job(app: FastAPI) -> None:
 @traceable(name="월간 종합 분석 cron job")
 async def monthly_report_job(app: FastAPI) -> None:
     db = SessionLocal()
-    rows = (
-        db.query(WeeklyAnalysis).filter(func.date_format(WeeklyAnalysis.date_time, "%Y-%m") == func.date_format(
-            func.date_sub(func.curdate(), func.interval(1, "month")), "%Y-%m"))
-        .all()
-    )
+    rows = (db.query(WeeklyAnalysis)
+            .filter(
+        func.date_format(WeeklyAnalysis.date_time, "%Y-%m")
+        == func.date_format(func.date_sub(func.curdate(), text("INTERVAL 1 MONTH")), "%Y-%m")
+    ).all())
     monthly_report = await monthly_report_chain.ainvoke(prompt_parameter={"trade_reports": rows})
 
     db.add(MonthlyReport(
